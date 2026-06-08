@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echathub - Monetize Your Conversations</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        /* 
+           Echathub Premium Gradient Green Color Palette
+        */
+        :root {
+            --clr-primary: #059669;
+            --clr-muted: #475569;
+            --clr-bg: #f0fdf4;
+            --clr-accent: #10b981;
+            --clr-dark: #064e3b;
+
+            /* Gradients */
+            --grad-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --grad-accent: linear-gradient(135deg, #34d399 0%, #0d9488 100%);
+            --grad-dark: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+            --grad-bg: linear-gradient(135deg, #f0fdf4 0%, #e8f5ec 100%);
+            --grad-text: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--grad-bg);
+            background-attachment: fixed;
+            color: var(--clr-dark);
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3,
+        .logo {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* --- Navigation & Global Elements --- */
+        nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(6, 78, 59, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--clr-dark);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            color: var(--clr-dark);
+            cursor: pointer;
+            font-weight: 600;
+            padding-bottom: 0.3rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links button:hover {
+            color: var(--clr-accent);
+        }
+
+        .nav-links button.active {
+            color: var(--clr-accent);
+            border-bottom: 2px solid var(--clr-accent);
+        }
+
+        .page-tag {
+            display: inline-block;
+            background-color: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            color: var(--clr-primary);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Page Router Visibility --- */
+        .page {
+            display: none;
+            padding: 2rem 1rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Page 1: Active Chats (Home) --- */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: var(--grad-text);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .btn-large-cta {
+            display: inline-block;
+            text-decoration: none;
+            background: var(--grad-primary);
+            color: #ffffff;
+            padding: 1.2rem 2.5rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.2);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            margin-top: 1rem;
+        }
+
+        .btn-large-cta:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 28px rgba(5, 150, 105, 0.3);
+        }
+
+        .chat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .chat-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            box-shadow: 0 4px 15px rgba(6, 78, 59, 0.03);
+            border: 1px solid rgba(16, 185, 129, 0.08);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .chat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(6, 78, 59, 0.12);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .user-name h3 {
+            font-size: 1.1rem;
+        }
+
+        .user-name span {
+            font-size: 0.85rem;
+            color: var(--clr-muted);
+        }
+
+        .user-status {
+            font-size: 0.85rem;
+            color: var(--clr-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .typing {
+            color: var(--clr-accent);
+            font-weight: 600;
+        }
+
+        .card-actions button {
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-start {
+            background: var(--grad-dark);
+            color: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .btn-start:hover {
+            background: var(--grad-primary);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .btn-watch {
+            background-color: transparent;
+            color: var(--clr-dark);
+            border: 1.5px solid var(--clr-dark) !important;
+            margin-left: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-watch:hover {
+            background-color: rgba(6, 78, 59, 0.05);
+            border-color: var(--clr-primary) !important;
+            color: var(--clr-primary);
+        }
+
+        /* --- Page 2: Earning Process --- */
+        .process-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .process-header h2 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: var(--grad-text);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            align-items: center;
+        }
+
+        .step-card {
+            background: #ffffff;
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(6, 78, 59, 0.03);
+            border: 1px solid rgba(16, 185, 129, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--grad-primary);
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(6, 78, 59, 0.12);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .step-card h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--clr-dark);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .step-number {
+            width: 45px;
+            height: 45px;
+            background: var(--grad-primary);
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin: 0 auto 1.5rem auto;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .stats-banner {
+            background: var(--grad-dark);
+            color: #ffffff;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 2rem;
+            margin-top: 4rem;
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.15);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item h2 {
+            font-size: 2.5rem;
+            background: var(--grad-accent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .stat-item p {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(240, 247, 244, 0.8);
+        }
+
+        /* --- Page 4: Blog Insights --- */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .blog-card {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(6, 78, 59, 0.03);
+            border: 1px solid rgba(16, 185, 129, 0.08);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(6, 78, 59, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .blog-card-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .blog-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .blog-card:hover .blog-card-image img {
+            transform: scale(1.08);
+        }
+
+        .blog-card-category {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--grad-primary);
+            color: #ffffff;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2);
+        }
+
+        .blog-card-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .blog-card-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--clr-muted);
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .blog-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--clr-dark);
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-card-summary {
+            font-size: 0.9rem;
+            color: var(--clr-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-card-link {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--clr-primary);
+            display: flex;
+            align-items: center;
+            transition: color 0.2s ease;
+        }
+
+        .blog-card:hover .blog-card-link {
+            color: var(--clr-dark);
+        }
+
+        /* --- Blog Details Modal Overlay --- */
+        .blog-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(4, 8, 6, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 1rem;
+        }
+
+        .blog-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .blog-modal-container {
+            background: #ffffff;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transform: scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .blog-modal.active .blog-modal-container {
+            transform: scale(1);
+        }
+
+        .blog-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--clr-dark);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .blog-modal-close:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: #ffffff;
+        }
+
+        .blog-modal-hero {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .blog-modal-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-modal-hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2.5rem 2rem 1.5rem;
+            background: linear-gradient(to top, rgba(8, 16, 13, 0.95) 20%, rgba(8, 16, 13, 0.5) 70%, transparent 100%);
+            color: #ffffff;
+        }
+
+        .blog-modal-category {
+            background: var(--grad-primary);
+            color: #ffffff;
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-block;
+            margin-bottom: 0.6rem;
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.2);
+        }
+
+        .blog-modal-hero h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.3;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .blog-modal-content {
+            padding: 2rem;
+            overflow-y: auto;
+            flex-grow: 1;
+            line-height: 1.7;
+            font-size: 1rem;
+            color: #2d3748;
+        }
+
+        .blog-modal-meta-info {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--clr-muted);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .blog-modal-content h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--clr-dark);
+            margin: 1.8rem 0 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .blog-modal-content p {
+            margin-bottom: 1.2rem;
+        }
+
+        .blog-modal-content ul,
+        .blog-modal-content ol {
+            margin-bottom: 1.2rem;
+            padding-left: 1.5rem;
+        }
+
+        .blog-modal-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-modal-content strong {
+            color: var(--clr-dark);
+        }
+
+        /* --- Media Queries --- */
+        @media (min-width: 600px) {
+            .blog-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .blog-modal-hero h2 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (min-width: 900px) {
+            .blog-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* --- Footer Styling --- */
+        footer {
+            background: var(--grad-dark);
+            color: #ffffff;
+            padding: 3rem 1.5rem;
+            margin-top: auto;
+            border-top: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-logo span {
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .footer-tagline {
+            font-size: 0.95rem;
+            color: #a3c4bc;
+        }
+
+        .footer-contacts {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1rem 0;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (min-width: 480px) {
+            .footer-contacts {
+                flex-direction: row;
+                gap: 2rem;
+            }
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .contact-item svg {
+            color: var(--clr-accent);
+        }
+
+        .contact-item a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .contact-item a:hover {
+            color: var(--clr-accent);
+        }
+
+        .footer-copyright {
+            font-size: 0.8rem;
+            color: #6a8b81;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <!-- Main Navigation -->
+    <nav>
+        <a href="#" class="logo" onclick="switchPage('page-1')">Echat<span>hub</span></a>
+        <div class="nav-links">
+            <button class="active" onclick="switchPage('page-1')">Active Chats</button>
+            <button onclick="switchPage('page-2')">Earning Process</button>
+            <button onclick="switchPage('page-4')">Blog Insights</button>
+        </div>
+    </nav>
+
+    <!-- PAGE 1: Active Chats -->
+    <main id="page-1" class="page active">
+        <div class="hero-section">
+            <div class="page-tag">Engage & Earn: Chat With Paid Subscribers Now</div>
+            <h1>Start a Chat. Earn Real Money.</h1>
+            <p style="color: var(--clr-muted); font-size: 1.1rem;">Connect directly with paid subscribers who are
+                waiting to talk to you right now.</p>
+            <a href="https://starhela.com/register.php?ref=Shishii" target="_blank" rel="noopener noreferrer"
+                class="btn-large-cta">START CHATTING & EARNING</a>
+
+        </div>
+
+        <div class="chat-grid" id="chat-grid">
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-accent);">KP</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Karen P.</h3> <span>• 51</span>
+                    </div>
+                    <div class="user-status">Australia • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-primary);">LE</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Lars E.</h3> <span>• 60</span>
+                    </div>
+                    <div class="user-status">Sweden • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-muted);">IO</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Ingrid O.</h3> <span>• 57</span>
+                    </div>
+                    <div class="user-status">Norway • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-dark);">PD</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Pierre D.</h3> <span>• 63</span>
+                    </div>
+                    <div class="user-status">France • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-accent);">SM</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Sarah M.</h3> <span>• 45</span>
+                    </div>
+                    <div class="user-status">United States • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-primary);">YT</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Yuki T.</h3> <span>• 38</span>
+                    </div>
+                    <div class="user-status">Japan • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-muted);">HS</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Hans S.</h3> <span>• 52</span>
+                    </div>
+                    <div class="user-status">Germany • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-dark);">ER</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Elena R.</h3> <span>• 29</span>
+                    </div>
+                    <div class="user-status">Spain • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New chats from African countries -->
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-accent);">FO</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Fatuma O.</h3> <span>• 24</span>
+                    </div>
+                    <div class="user-status">Kenya • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-primary);">CM</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Chidi M.</h3> <span>• 28</span>
+                    </div>
+                    <div class="user-status">Nigeria • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-muted);">ZK</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Zanele K.</h3> <span>• 31</span>
+                    </div>
+                    <div class="user-status">South Africa • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-dark);">KA</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Kofi A.</h3> <span>• 26</span>
+                    </div>
+                    <div class="user-status">Ghana • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-accent);">DB</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Derrick B.</h3> <span>• 29</span>
+                    </div>
+                    <div class="user-status">Uganda • Looking to talk</div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-card">
+                <div class="avatar" style="background-color: var(--clr-primary);">AH</div>
+                <div class="user-info">
+                    <div class="user-name">
+                        <h3>Amira H.</h3> <span>• 25</span>
+                    </div>
+                    <div class="user-status">Egypt • <span class="typing">typing...</span></div>
+                    <div class="card-actions">
+                        <button class="btn-start">Start</button>
+                        <button class="btn-watch">Watch</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE 2: Earning Process -->
+    <main id="page-2" class="page">
+        <div class="process-header">
+            <div class="page-tag">Monetize Your Time: Turn Messages Into Income</div>
+            <h2>How Echathub Generates Income</h2>
+            <p style="color: var(--clr-muted); margin-top: 0.5rem;">Three direct steps from creating your profile to
+                withdrawing cash.</p>
+
+        </div>
+
+        <div class="steps-container" id="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Register Profile</h3>
+                <p style="color: var(--clr-muted);">Create your dedicated chat account in seconds to get matched with
+                    paying users.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Engage in Chats</h3>
+                <p style="color: var(--clr-muted);">Accept incoming chat requests from paid subscribers and earn per
+                    message exchanged.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Withdraw Earnings</h3>
+                <p style="color: var(--clr-muted);">Cash out your accumulated earnings directly to your mobile wallet
+                    seamlessly.</p>
+            </div>
+        </div>
+
+        <div class="stats-banner">
+            <div class="stat-item">
+                <h2>80,496</h2>
+                <p>Active Chatters</p>
+            </div>
+            <div class="stat-item">
+                <h2>$1,286,124</h2>
+                <p>Total Payouts</p>
+            </div>
+            <div class="stat-item">
+                <h2>1,592</h2>
+                <p>Online Now</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- PAGE 4: Blog Insights -->
+    <main id="page-4" class="page">
+        <div class="hero-section">
+            <div class="page-tag">Insights & Strategies: Grow Your Online Revenue</div>
+            <h1>Echathub Blog Insights</h1>
+            <p style="color: var(--clr-muted); font-size: 1.1rem; max-width: 600px; margin: 0.5rem auto 0;">Explore our
+                curated articles, remote support strategies, side hustle guides, and tips for digital nomad success.</p>
+        </div>
+
+        <div class="blog-grid" id="blog-grid">
+            <!-- Loaded dynamically via JS -->
+        </div>
+    </main>
+
+    <!-- Blog Details Modal Overlay -->
+    <div class="blog-modal" id="blog-modal" onclick="closeBlogModalOnBackdrop(event)">
+        <div class="blog-modal-container">
+            <button class="blog-modal-close" onclick="closeBlogModal()">&times;</button>
+            <div class="blog-modal-hero" id="blog-modal-hero">
+                <!-- Loaded dynamically via JS -->
+            </div>
+            <div class="blog-modal-content" id="blog-modal-body">
+                <!-- Loaded dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer with Contact Information -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Echat<span>hub</span></div>
+            <p class="footer-tagline">Monetize your time, turn messages into income.</p>
+            <div class="footer-contacts">
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    <a href="tel:+254769233934">+254 769 233 934</a>
+                </div>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    <a href="tel:+254721685615">+254 721 685 615</a>
+                </div>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                    </svg>
+                    <a href="mailto:mentorshishi@gmail.com">mentorshishi@gmail.com</a>
+                </div>
+            </div>
+            <div class="footer-copyright">&copy; 2026 Echathub. All rights reserved.</div>
+        </div>
+    </footer> <!-- Script for SPA Navigation & Interactive Blog Insights -->
+    <script>
+        // --- SPA Navigation ---
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(pageId).classList.add('active');
+
+            const navButtons = document.querySelectorAll('.nav-links button');
+            if (pageId === 'page-1') navButtons[0].classList.add('active');
+            else if (pageId === 'page-2') navButtons[1].classList.add('active');
+            else if (pageId === 'page-4') navButtons[2].classList.add('active');
+
+            window.scrollTo(0, 0);
+        }
+
+        // --- Blog Articles Database ---
+        const blogData = [
+            {
+                title: "The Rise of Chat Operators: How to Earn Money by Messaging",
+                category: "Remote Work",
+                readTime: "4 min read",
+                date: "June 8, 2026",
+                summary: "Discover the fast-growing industry of conversational commerce and how individuals are generating steady income simply by replying to customer queries.",
+                image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>In today's digital first economy, businesses are increasingly realizing that customer engagement happens in real time. Rather than filling out contact forms or waiting days for email replies, modern consumers expect instantaneous replies. This shift has fueled the rise of the chat operator industry.</p>
+                    <h3>What is a Chat Operator?</h3>
+                    <p>A chat operator is a remote worker who manages live conversations on behalf of a brand, platform, or online community. These conversations can range from answering basic inquiries and helping customers navigate an e-commerce website to providing friendly interactions in specialized online chat forums.</p>
+                    <h3>How Do You Earn Money?</h3>
+                    <p>Most chat operators are paid on a flexible freelance basis. Typical earning structures include:</p>
+                    <ul>
+                        <li><strong>Pay Per Message:</strong> Earning a fixed rate for every message reply sent. The faster and more engaged you are, the higher your payout.</li>
+                        <li><strong>Hourly Shifts:</strong> Dedicated support roles paid at flat hourly rates ranging from $5 to $20 USD.</li>
+                        <li><strong>Performance Bonuses:</strong> Extra incentives for high customer satisfaction ratings or message volumes.</li>
+                    </ul>
+                    <h3>How to Start</h3>
+                    <p>Getting started requires no prior coding experience. All you need is a reliable internet connection, a laptop or smartphone, and strong typing skills. Simply create a profile on reputable remote work boards or partner portals, pass a quick communications test, and you can begin accepting chats immediately.</p>
+                `
+            },
+            {
+                title: "Top 5 Side Hustles in Africa for 2026",
+                category: "Side Hustles",
+                readTime: "6 min read",
+                date: "May 24, 2026",
+                summary: "From freelance writing to mobile micro-tasking, we analyze the highest-paying digital side businesses accessible across Africa today.",
+                image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>Digital connectivity across Africa is expanding at an unprecedented rate, opening up brand new avenues for side earnings. Whether you are a student, a full-time employee, or looking to build a digital career, these five remote side hustles offer excellent flexibility and pay in 2026.</p>
+                    <h3>1. Remote Chat Operations</h3>
+                    <p>As covered widely on Echathub, acting as a remote chatter for international businesses is one of the lowest-barrier ways to start earning. Payments are often processed weekly directly to mobile money accounts (like M-Pesa or MTN MoMo), making cash withdrawals effortless.</p>
+                    <h3>2. Micro-Tasking Platforms</h3>
+                    <p>Websites like Amazon Mechanical Turk or Toloka allow users to complete micro-tasks—such as labeling images, data entry, or translating phrases—directly from their smartphones. While individual task payouts are small, they quickly accumulate.</p>
+                    <h3>3. Social Media Management</h3>
+                    <p>Many local African SMEs need assistance maintaining their presence on Instagram, TikTok, and WhatsApp Business. Helping them run campaigns, schedule posts, and reply to customer inquiries can earn you steady monthly retainer contracts.</p>
+                    <h3>4. Freelance Copywriting & Translation</h3>
+                    <p>With global platforms like Upwork and Fiverr, writers can create content for international clients. Translators fluent in local languages (such as Swahili, Yoruba, Zulu, or Amharic) are highly sought after by global localization companies.</p>
+                    <h3>5. Affiliate Redirect Operations</h3>
+                    <p>By promoting products or platform signups via unique affiliate links in social media bio slots or messaging channels, you can earn commissions on every conversion. This model requires minimal maintenance once your links are set up.</p>
+                `
+            },
+            {
+                title: "Affiliate Marketing 101: Redirecting Traffic for Big Payouts",
+                category: "Affiliate",
+                readTime: "5 min read",
+                date: "April 18, 2026",
+                summary: "A beginner-friendly guide to passive income. Learn how to place affiliate links, build target audiences, and earn commissions on referral traffic.",
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>Affiliate marketing is one of the most popular ways to make money online because it doesn't require you to create, stock, or ship any products. Instead, you act as the middleman, directing interested visitors to a target store or network and earning a commission on every sale or registration.</p>
+                    <h3>How Affiliate Marketing Works</h3>
+                    <p>The affiliate flow is simple:</p>
+                    <ol>
+                        <li>You join an affiliate program (such as Amazon Associates, ClickBank, or specialized platforms).</li>
+                        <li>You get a unique referral URL (an affiliate link).</li>
+                        <li>You share that link on your website, social media, or in chats.</li>
+                        <li>When someone clicks the link and makes a purchase, the system tracks the referral cookie and pays you a percentage of the transaction.</li>
+                    </ol>
+                    <h3>Tips for Maximizing Commissions</h3>
+                    <p>Success in affiliate marketing comes down to trust and traffic. Focus on building a dedicated niche audience rather than spamming random links. Review products honestly, explain the benefits clearly, and guide your audience exactly where they can find them.</p>
+                `
+            },
+            {
+                title: "How to Monetize Your Social Media Conversations",
+                category: "Social Media",
+                readTime: "3 min read",
+                date: "March 30, 2026",
+                summary: "Turn your daily DMs and social chats into a revenue stream by representing brands, doing consulting, or referring premium platforms.",
+                image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>Most of us spend hours everyday chatting on WhatsApp, Instagram DMs, or Facebook Messenger without making a single cent. But did you know that those conversations represent high-value engagement? Brands are willing to pay for people who can direct chats toward a purchase.</p>
+                    <h3>Conversational Selling</h3>
+                    <p>Conversational selling involves recommending a product or platform organically within a conversation. For example, if a friend is looking for a way to make money online, sharing your affiliate link for a registered remote chatter network provides value to them while generating a commission payout for you.</p>
+                    <h3>Important Dos and Don'ts</h3>
+                    <p>Always maintain a friendly, helpful tone. Never spam automated text blocks to people who haven't asked for them. The key is organic recommendation—only share links when they solve a specific problem the other person is facing.</p>
+                `
+            },
+            {
+                title: "Work from Anywhere: A Guide to the Digital Nomad Lifestyle",
+                category: "Digital Nomad",
+                readTime: "7 min read",
+                date: "February 12, 2026",
+                summary: "What does it take to travel the world while working online? We break down the tools, connectivity setups, and mindset needed for nomad success.",
+                image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>The dream of traveling the world while earning online has become a reality for millions of digital nomads. With just a laptop and a stable internet connection, you can base yourself in tropical destinations while working for clients halfway across the globe.</p>
+                    <h3>Key Tools for Digital Nomads</h3>
+                    <p>To successfully work while traveling, you need a robust technical toolkit:</p>
+                    <ul>
+                        <li><strong>Reliable Connectivity:</strong> Always verify Wi-Fi speeds before booking accommodations. Travel with a backup mobile hotspot and local SIM cards.</li>
+                        <li><strong>Time-Zone Syncing:</strong> Use apps like World Time Buddy to schedule meetings with clients across different zones without confusion.</li>
+                        <li><strong>Secure Backup:</strong> Maintain cloud backups (Google Drive, Dropbox) for all your active project files to protect against device loss or damage.</li>
+                    </ul>
+                    <h3>Choosing Your Destination</h3>
+                    <p>Look for spots with low living costs, friendly visa policies, active co-working spaces, and strong community hubs to combat the occasional loneliness of the nomad lifestyle.</p>
+                `
+            },
+            {
+                title: "Maximizing Online Earnings: Tips and Tricks for Beginners",
+                category: "Finance",
+                readTime: "5 min read",
+                date: "January 20, 2026",
+                summary: "Avoid common traps, manage your payment wallets, and structure your freelance hours to double your hourly revenue streams.",
+                image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>Starting out in the online freelance space can be overwhelming. Many beginners make the mistake of working long hours for low pay, or falling victim to untrustworthy sites. Here are a few essential tips to build a profitable and safe remote career.</p>
+                    <h3>1. Track Your Time</h3>
+                    <p>Use tools like Toggl to track exactly how much time you spend on different client tasks. This allows you to evaluate your true hourly rate and focus on the tasks that pay the best.</p>
+                    <h3>2. Diversify Your Clients</h3>
+                    <p>Never rely on a single client or platform. If that platform changes its policies or terminates your account, your income stream could disappear overnight. Spread your services across multiple projects.</p>
+                    <h3>3. Master Your Wallets</h3>
+                    <p>Set up reliable international payment channels like PayPal, Payoneer, and regional mobile money systems in advance. Always be aware of withdrawal fees and exchange rates so you don't lose money during transfers.</p>
+                `
+            },
+            {
+                title: "The Future of Remote Customer Support Roles",
+                category: "Jobs",
+                readTime: "4 min read",
+                date: "January 5, 2026",
+                summary: "Artificial intelligence is changing customer support, but human chat operators remain indispensable. Here is how to position yourself for the future.",
+                image: "https://images.unsplash.com/photo-1549923746-c502d488b3ea?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>As artificial intelligence continues to advance, many support tasks are being automated. However, AI lacks the emotional intelligence, empathy, and problem-solving flexibility that human customer support representatives naturally bring to the table.</p>
+                    <h3>How AI and Humans Coexist</h3>
+                    <p>In 2026, the best customer support agents use AI as an assistant rather than viewing it as a threat. AI handles repetitive FAQs and drafts quick replies, while human operators take over complex inquiries, dispute resolutions, and relationship-building conversations.</p>
+                    <h3>Skills to Develop</h3>
+                    <p>To stay competitive, focus on developing soft skills: active listening, cross-cultural communication, and advanced troubleshooting. Being bilingual or trilingual also remains an incredible asset that commands premium pay.</p>
+                `
+            },
+            {
+                title: "Why Conversational Commerce is the Next Big Thing",
+                category: "Technology",
+                readTime: "5 min read",
+                date: "December 14, 2025",
+                summary: "More companies are shifting from shopping carts to chat widgets. Explore why buying directly through chat is the future of retail commerce.",
+                image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>Conversational commerce refers to the intersection of shopping and messaging. Instead of browsing large, complex websites and filling out traditional checkout pages, users are purchasing items directly within chat threads on WhatsApp, Messenger, and Instagram.</p>
+                    <h3>Why Consumers Love It</h3>
+                    <p>Chat-based shopping feels like a personal consultation. A chat operator can answer questions about sizes, recommend matching accessories, send payment links, and confirm order tracking—all without the customer leaving their favorite messaging application.</p>
+                    <h3>The Opportunity for Remote Chatters</h3>
+                    <p>As thousands of brands adopt chat commerce, the demand for trained chat operators who can manage leads, close sales, and maintain client relationships is surging globally, making this a highly lucrative career path.</p>
+                `
+            },
+            {
+                title: "Building a Personal Brand That Generates Passive Income",
+                category: "Personal Brand",
+                readTime: "6 min read",
+                date: "November 28, 2025",
+                summary: "How to use platforms like LinkedIn and Twitter to build authority in your niche, attracting sponsorships and paid consultations automatically.",
+                image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>A strong personal brand is a magnet for opportunities. When you position yourself as an authority in a specific field, you no longer have to pitch to clients or apply for random jobs. Instead, clients, brand sponsors, and consulting leads actively seek you out.</p>
+                    <h3>How to Build Your Niche Authority</h3>
+                    <p>Start by sharing your knowledge consistently. Write guides, discuss industry trends, and review products on platforms like LinkedIn, Medium, or YouTube. Engage with other professionals in your space to build a network.</p>
+                    <h3>Monetizing Your Brand</h3>
+                    <p>Once you have an audience that trusts your recommendations, you can monetize via sponsorships, digital e-books, premium webinars, paid consulting calls, and affiliate product recommendations.</p>
+                `
+            },
+            {
+                title: "Staying Safe Online: Best Practices for Freelance Chatters",
+                category: "Security",
+                readTime: "4 min read",
+                date: "November 10, 2025",
+                summary: "Protect your personal data and keep your digital wallets secure while working as an independent freelance operator or chat agent.",
+                image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=600&auto=format&fit=crop",
+                content: `
+                    <p>Freelancing online offers incredible freedom, but it also exposes you to potential security risks. From scam clients to phishing sites targeting your banking credentials, staying vigilant is essential for protecting your earnings and personal identity.</p>
+                    <h3>1. Never Share Passwords or Credentials</h3>
+                    <p>Legitimate freelance networks and portals will never ask you for your login passwords, OTPs, or bank account PIN codes. Keep this data strictly confidential.</p>
+                    <h3>2. Use Secure Payment Gateways</h3>
+                    <p>Only accept payments through reputable channels (such as PayPal, Stripe, Payoneer, or direct verified bank/mobile transfers). Avoid custom, untrusted payment links sent by clients.</p>
+                    <h3>3. Enable Two-Factor Authentication (2FA)</h3>
+                    <p>Always activate 2FA on your email accounts, social media platforms, payment wallets, and remote work dashboard profiles to add an extra layer of protection against unauthorized access.</p>
+                `
+            }
+        ];
+
+        // --- Render Blog Cards ---
+        function renderBlogs() {
+            const grid = document.getElementById('blog-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            blogData.forEach((blog, index) => {
+                const card = document.createElement('div');
+                card.className = 'blog-card';
+                card.onclick = () => openBlogModal(index);
+                card.innerHTML = `
+                    <div class="blog-card-image">
+                        <img src="${blog.image}" alt="${blog.title}" loading="lazy">
+                        <span class="blog-card-category">${blog.category}</span>
+                    </div>
+                    <div class="blog-card-content">
+                        <div class="blog-card-meta">
+                            <span>📅 ${blog.date}</span>
+                            <span>⏱️ ${blog.readTime}</span>
+                        </div>
+                        <h3 class="blog-card-title">${blog.title}</h3>
+                        <p class="blog-card-summary">${blog.summary}</p>
+                        <span class="blog-card-link">Read Article &rarr;</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- Modal Control Functions ---
+        function openBlogModal(index) {
+            const modal = document.getElementById('blog-modal');
+            const hero = document.getElementById('blog-modal-hero');
+            const body = document.getElementById('blog-modal-body');
+
+            if (!modal || !hero || !body) return;
+
+            const blog = blogData[index];
+
+            hero.innerHTML = `
+                <img src="${blog.image}" alt="${blog.title}">
+                <div class="blog-modal-hero-overlay">
+                    <span class="blog-modal-category">${blog.category}</span>
+                    <h2>${blog.title}</h2>
+                </div>
+            `;
+
+            body.innerHTML = `
+                <div class="blog-modal-meta-info">
+                    <span>📅 Published: ${blog.date}</span>
+                    <span>⏱️ Read Time: ${blog.readTime}</span>
+                </div>
+                ${blog.content}
+            `;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBlogModal() {
+            const modal = document.getElementById('blog-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeBlogModalOnBackdrop(e) {
+            if (e.target.id === 'blog-modal') {
+                closeBlogModal();
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeBlogModal();
+            }
+        });
+
+        // Initialize Blog Section on load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderBlogs();
+        });
+    </script>
+</body>
+
+</html>
